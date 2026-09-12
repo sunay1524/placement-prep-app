@@ -96,3 +96,34 @@ export async function createJob(formData: FormData) {
   revalidatePath("/dashboard");
   redirect("/dashboard");
 }
+
+export async function deleteExperience(experienceId: string) {
+  const session = await auth();
+  if (!session || !session.user?.id) {
+    throw new Error("You must be logged in to delete an experience.");
+  }
+
+  // Fetch experience to verify ownership
+  const experience = await prisma.experience.findUnique({
+    where: { id: experienceId },
+    select: { userId: true },
+  });
+
+  if (!experience) {
+    throw new Error("Experience not found.");
+  }
+
+  if (experience.userId !== session.user.id) {
+    throw new Error("You are not authorized to delete this experience.");
+  }
+
+  // Delete experience (cascades rounds, upvotes, bookmarks)
+  await prisma.experience.delete({
+    where: { id: experienceId },
+  });
+
+  revalidatePath("/dashboard");
+  revalidatePath("/");
+  return { success: true };
+}
+

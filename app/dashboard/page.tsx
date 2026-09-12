@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
+import DeleteExperienceButton from "@/components/DeleteExperienceButton";
 
 export default async function DashboardPage() {
   const session = await auth();
@@ -192,9 +193,10 @@ export default async function DashboardPage() {
 
                   <div className="border-t border-slate-100 pt-3 flex justify-between items-center text-xs text-slate-500">
                     <span>{new Date(exp.createdAt).toLocaleDateString()}</span>
-                    <div className="flex gap-3 font-medium">
+                    <div className="flex items-center gap-3 font-medium">
                       <span>👍 {exp.upvotes.length}</span>
                       <span>🔖 {exp.bookmarks.length}</span>
+                      <DeleteExperienceButton experienceId={exp.id} />
                     </div>
                   </div>
                 </Link>

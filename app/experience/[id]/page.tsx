@@ -12,6 +12,7 @@ export default async function ExperienceDetailPage({ params }: ExperiencePagePro
   const { id } = await params;
   const session = await auth();
 
+
   const experience = await prisma.experience.findUnique({
     where: { id },
     include: {
